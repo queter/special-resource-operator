@@ -1,36 +1,32 @@
 # Special Resource Operator Lab
  
 
-The lab assumes that there is an cluster already deployed and it contains the following exercises:
+## Table of contents
+
+## [Deploy SRO](#deploy-sro)
+
+Installing SRO will also automatically install the [node-feature-discovery-operator](https://github.com/openshift/node-feature-discovery) which is a dependency.
+
+## [Deploy a simple driver-container](#deploy-simple-driver-container)
 
 
-	- Exercise 1
-        	- SRO will be deployed along with NFD dependency for SRO v1.
-        	- Verify SRO and NFD are running.
-	- Exercise 2
-		- Simple kmod example used as a deployment exercise.
- 		- Verify simple kmod is deployed and running.
-	- Exercise 3
-		- More advanced recipe will be used along with DTK for the following:
-		- Use DTK to build a driver container image
-		- Create a recipe for SRO which will deploy the newly created driver image from the local registry
-		- Verify the Daemonset is running on the needed nodes
-	- Exercise 4
-		- Most advanced recipe to include deploying a kernel module built using DTK and deploying a device plug-in
-		- Create a recipe which deploys a kmod along with a kubernetes device plug-in
-		- Verify both the Daemonset and device plug-in are deployed and running in cluster
-	- Exercise 5
-		- Troubleshoot failure to load a kmod
+## [Deploy Intel's ICE driver-container](#deploy-intel's-ice-driver-container)
+
+
+## [Deploy a simple driver-container as well as a device plugin](#deploy-a-simple-driver-container-as-well-as-a-device-plugin)
+
+
+## [Troubleshoot failures to load a driver-container](#troubleshoot-failures-to-load-a-driver-container)
 
 
 
 
-## EXERCISE 1
+### Deploy SRO
 
 ** Deploy SRO with the necessary dependency NFD and verify that both are running
 
  
-### Using command-line
+#### Using command-line
 We create a subscription object by adding this YAML to a new file, i.e `special-resource-operator.yaml`:
 
 ```shell
@@ -94,7 +90,7 @@ Choose Special Resource Operator provided by Red Hat and click the Install butto
 
 
 
-## EXERCISE 2
+## Deploy simple driver container
 
 
 **Deploy simple-kmod example**
@@ -395,12 +391,14 @@ simple_kmod            16384  0
 
 
 
-## EXERCISE 3
+## Deploy Intel's ICE driver-container 
 
 
-**Using DTK to build a driver container image**
+[driver-toolkit](https://github.com/openshift/driver-toolkit) a.k.a. DTK is a container image which can be used as a base image to build out-of-tree driver containers as it has all the required dependencies to do so.
 
-Driver Toolkit a.k.a. DTK is a container image which can be used as a base image to build out-of-tree driver containers as it has all the required dependencies to do so.
+A more advanced recipe will be used along with DTK for the following:
+Use DTK to build a driver container image, create a recipe for SRO which will deploy the newly created driver image from the local registry and verify the Daemonset is running on the needed nodes.
+
 The only previous requirement is knowing in advance which DTK image is needed to use.
 This image will depend on your Openshift Cluster version and architecture type.
 We could find out version and use data accordingly i.e for an x86 architecture image:
@@ -673,7 +671,7 @@ ice-kmod-driver-container-e383247e62b56585-pphbs   1/1     Running     0        
 
 
 
-## EXERCISE 4
+## Deploy a simple driver-container as well as a device plugin
 
 
  Make a recipe to include deploying a kernel module built using DTK and deploying a device plug-in
@@ -1018,10 +1016,9 @@ DUMMY_DEVICES=dev_1
 
 
 
-## EXERCISE 5
+## Troubleshoot failures to load a driver-container
 
 
-Troubleshoot failure to load a kmod
 There are some different places we could look for logs and traces regarding the load or build of our modules with SRO.
 
 Different examples:
@@ -1045,19 +1042,20 @@ oc get events
 …
 2022-06-20T16:06:55.286Z	INFO	warning  	OnError: node Conflict Label specialresource.openshift.io/state-dp-simple-kmod-0000 err %!s(<nil>)
 …
+```
 * Driver-container pod is created but STATUS is different from `Running`:
+
 ```
 NAME                                                  READY   STATUS             RESTARTS   AGE
 simple-kmod-driver-container-e383247e62b56585-2gx7r   0/1     ImagePullBackOff   0          16s
 ```
+
 Registry is not accessible or BuildConfig did not end successfully.
 We could inspect logs of the pod or describe it. In this example if we describe the pod we could easily confirm that the image is not in our local registry:
 
 
-
 ```
   Warning  Failed          4m25s (x4 over 5m52s)  kubelet            Failed to pull image "image-registry.openshift-image-registry.svc:5000/simple-kmod/simple-kmod-driver-container:v4.18.0-305.40.2.el8_4.x86_64": rpc error: code = Unknown desc = reading manifest v4.18.0-305.40.2.el8_4.x86_64 in image-registry.openshift-image-registry.svc:5000/simple-kmod/simple-kmod-driver-container: manifest unknown: manifest unknown
-
 
 ```
 
