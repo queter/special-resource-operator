@@ -56,6 +56,7 @@ $ HELM_PLUGINS=$PWD/helm-plugins KUBECONFIG=$HOME/.kube/config OPERATOR_NAMESPAC
 SRO manages a subdirectory inside Go's [`os.UserCacheDir`](https://pkg.go.dev/os#UserCacheDir) for the Helm cache.
 
 # Creating a special resource recipe
+See [docs/lab/README.md](lab) for most updated examples and use cases.
 
 See [docs/recipes.md](docs/recipes.md) for instructions on how to create a recipe for SRO to manage. 
 
